@@ -82,6 +82,8 @@ function compute!(::Caputo, ws::NumDiffWorkspace, data::Vector{Float64}, prob::N
         for j in 1:(i-1)
             tmp += weights[j] * (data[i-j+1] - data[i-j])
         end
+        # Add the first data point contribution
+        tmp += weights[i] * data[1]
         ws.deriv[i] = C * tmp
     end
 end
@@ -103,7 +105,8 @@ function compute!(::CaputoThreads, ws::NumDiffWorkspace, data::Vector{NumDiffFlo
         @simd for j in 1:(i-1)
             tmp += weights[j] * (data[i-j+1] - data[i-j])
         end
-
+        # Add the first data point contribution
+        tmp += weights[i] * data[1]
         @inbounds ws.deriv[i] = C * tmp
     end
 
