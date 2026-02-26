@@ -24,7 +24,7 @@ module NumFracDiff
     export RL, RLThreads, RLShortMemCorr, RLShortMemCorrThreads
 
     # base.jl
-    export init_workspace, optimal_L!
+    export init_workspace, optimal_L!, update_order!
 
     export NumDiffFloat, NumDiffInt
 

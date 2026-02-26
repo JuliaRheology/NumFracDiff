@@ -87,3 +87,14 @@ function optimal_L!(data::Vector{NumDiffFloat}, prob::NumDiffProblem; tol::Float
 
 end
 
+
+
+function update_order!(prob, ws, order_new)
+
+    if order_new != prob.order
+
+        prob.order = order_new;
+        generate_weights!(prob.method, prob, ws)
+    end
+
+end
