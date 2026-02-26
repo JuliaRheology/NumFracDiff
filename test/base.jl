@@ -78,3 +78,55 @@
 
 
 end
+
+
+
+function test_update_order_methods()
+    dt = 1e-3
+    n  = 500
+    α  = 0.5
+    new_order = 0.8
+
+    # List of methods to test
+    methods = [
+        Caputo(),
+        CaputoThreads(),
+        RL(),
+        RLThreads(),
+        RLShortMemCorr(1000),
+        RLShortMemCorrThreads(1000)
+    ]
+
+    for method in methods
+        @testset "Testing update_order! with $(typeof(method))" begin
+            prob = NumDiffProblem(dt=dt, order=α, n=n, method=method)
+            ws = NumDiffWorkspace(zeros(n), zeros(n))
+
+            # Save original weights for comparison
+            original_weights = copy(ws.weights)
+
+            # Update order
+            update_order!(prob, ws, new_order)
+
+            # Test that order is updated
+            @test prob.order == new_order
+
+            # Test that weights are regenerated
+            @test !all(ws.weights .== original_weights)
+
+            # Test that assertion triggers if same order is passed again
+            err = try
+                update_order!(prob, ws, new_order)
+                false
+            catch e
+                e isa AssertionError
+            end
+            @test err == true
+        end
+    end
+end
+
+# Run the test
+@testset "update_order! tests" begin
+    test_update_order_methods()
+end
