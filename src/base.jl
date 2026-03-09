@@ -87,14 +87,22 @@ function optimal_L!(data::Vector{NumDiffFloat}, prob::NumDiffProblem; tol::Float
 
 end
 
+"""
+    update_order!(prob::NumDiffProblem, ws::NumDiffWorkspace, order_new::Float64)
 
+    Update the fractional derivative order of a numerical differentiation problem and recomputes the weights for the current method.
+
+    # Arguments
+    - `prob::NumDiffProblem` : The problem struct containing `dt`, `order`, `n`, and `method`.
+    - `ws::NumDiffWorkspace` : Workspace containing precomputed weights and derivative storage.
+    - `order_new::Float64`  : The new fractional order to apply.
+"""
 
 function update_order!(prob, ws, order_new)
+    # Ensure the new order is different from the current one
+    @assert order_new != prob.order "New derivative order is the same as current one"
 
-    if order_new != prob.order
-
-        prob.order = order_new;
-        generate_weights!(prob.method, prob, ws)
-    end
-
+    # Update the order and regenerate weights
+    prob.order = order_new
+    generate_weights!(prob.method, prob, ws)
 end
