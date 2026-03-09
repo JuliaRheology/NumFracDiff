@@ -34,11 +34,35 @@ mutable struct RLShortMemCorrThreads <: DiffMethod
 end
 
 
-struct GL <: DiffMethod end
-struct GLThreads <: DiffMethod end
+mutable struct GL <: DiffMethod 
+    L::NumDiffInt
+    # Inner constructor
+    function GL(L::NumDiffInt = typemax(NumDiffInt))
+        new(L)
+    end
+end
 
-struct GLCorr <: DiffMethod end
-struct GLCorrThreads <: DiffMethod end
+mutable struct GLThreads <: DiffMethod 
+    L::NumDiffInt
+    # Inner constructor
+    function GLThreads(L::NumDiffInt = typemax(NumDiffInt))
+        new(L)
+    end
+end
+
+mutable struct GLShortMemCorr <: DiffMethod 
+    L::NumDiffInt
+    function GLShortMemCorr(L::NumDiffInt)
+        new(L)
+    end
+end
+
+mutable struct GLShortMemCorrThreads <: DiffMethod 
+    L::NumDiffInt
+    function GLShortMemCorrThreads(L::NumDiffInt)
+        new(L)
+    end
+end
 
 
 """

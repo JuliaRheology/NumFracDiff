@@ -59,11 +59,17 @@ end
 
     # Define the derivative methods you want to test
     methods = [
+        GL(),
+        GLThreads(),
         Caputo(),
         CaputoThreads(), 
         RL(), 
         RLThreads(), 
+        GL(L),
         RL(L), 
+        GLThreads(L),
+        GLShortMemCorr(L),
+        GLShortMemCorrThreads(L),
         RLThreads(L), 
         RLShortMemCorr(L), 
         RLShortMemCorrThreads(L)
@@ -72,9 +78,15 @@ end
     tollerances = [
         1e-10,
         1e-10,
+        1e-10,
+        1e-10,
         1e-10, 
         1e-10,
         1e-1,
+        1e-1,
+        1e-1,
+        1e-2,
+        1e-2,
         1e-1,
         1e-2,
         1e-2 
