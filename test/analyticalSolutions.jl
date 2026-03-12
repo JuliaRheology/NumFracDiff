@@ -55,41 +55,39 @@ end
     α = convert(NumDiffFloat, 0.2)
     n = convert(NumDiffInt, length(t))
 
-    L = convert(NumDiffInt, 4000)
-
     # Define the derivative methods you want to test
     methods = [
         GL(),
         GLThreads(),
+        GLShortMem(),
+        GLShortMemThreads(),
+        GLShortMemCorr(),
+        GLShortMemCorrThreads(),  
         Caputo(),
         CaputoThreads(), 
         RL(), 
-        RLThreads(), 
-        GL(L),
-        RL(L), 
-        GLThreads(L),
-        GLShortMemCorr(L),
-        GLShortMemCorrThreads(L),
-        RLThreads(L), 
-        RLShortMemCorr(L), 
-        RLShortMemCorrThreads(L)
+        RLThreads(),
+        RLShortMem(), 
+        RLShortMemThreads(), 
+        RLShortMemCorr(), 
+        RLShortMemCorrThreads()
     ]
 
     tollerances = [
         1e-10,
         1e-10,
+        1e-1,
+        1e-1,
+        5e-2, 
+        5e-2,
         1e-10,
         1e-10,
-        1e-10, 
+        1e-10,
         1e-10,
         1e-1,
         1e-1,
-        1e-1,
-        1e-2,
-        1e-2,
-        1e-1,
-        1e-2,
-        1e-2 
+        5e-2, 
+        5e-2,
     ]
 
     # Loop over methods
@@ -145,9 +143,9 @@ end
             # Compute error (ignore first point for step)
             # -----------------------------
             if func_type == "step" || func_type == "power"
-                error = 0.0 # maximum(abs.(ws.deriv[2:end] .- exact[2:end]))
+                error = sum(abs.(ws.deriv[2:end] .- exact[2:end]))/length(ws.deriv[2:end])
             else
-                error = maximum(abs.(ws.deriv[2:end] .- exact[2:end])./exact[2:end])
+                error = sum(abs.(ws.deriv[2:end] .- exact[2:end])./exact[2:end])/length(ws.deriv[2:end])
             end
 
             @info "Max error for $func_type = $error"

@@ -16,7 +16,7 @@
 
 """
 
-function generate_weights!(::Union{GL,GLThreads,GLShortMemCorr,GLShortMemCorrThreads}, prob::NumDiffProblem, ws::NumDiffWorkspace)
+function generate_weights!(::Union{GL,GLThreads,GLShortMem,GLShortMemThreads,GLShortMemCorr,GLShortMemCorrThreads}, prob::NumDiffProblem, ws::NumDiffWorkspace)
     
     ws.weights[1] = 1.0
 
@@ -32,8 +32,43 @@ function compute!(method::GL, ws::NumDiffWorkspace, data::Vector{NumDiffFloat}, 
     n  = prob.n
     α  = prob.order
     dt = prob.dt
-    L  = method.L
     weights = ws.weights
+
+    inv_dt_pow = 1.0 / (dt^α)
+    @inbounds for i in 1:n
+        acc = 0.0
+        for j in 1:i
+            acc += weights[j] * data[i-j+1]
+        end
+        ws.deriv[i] = acc * inv_dt_pow
+    end
+end
+
+function compute!(method::GLThreads, ws::NumDiffWorkspace, data::Vector{NumDiffFloat}, prob::NumDiffProblem)
+    n  = prob.n
+    α  = prob.order
+    dt = prob.dt
+    weights = ws.weights
+
+    inv_dt_pow = 1.0 / (dt^prob.order)
+
+    @threads :dynamic for i in 1:n
+    acc = 0.0
+        @simd for j in 1:i
+            @inbounds acc += weights[j] * data[i-j+1]
+        end
+        @inbounds ws.deriv[i] = acc * inv_dt_pow
+    end
+end
+
+
+function compute!(method::GLShortMem, ws::NumDiffWorkspace, data::Vector{NumDiffFloat}, prob::NumDiffProblem)
+    n  = prob.n
+    α  = prob.order
+    dt = prob.dt
+    weights = ws.weights
+    optimal_L!(data,prob)
+    L=prob._L
 
     inv_dt_pow = 1.0 / (dt^α)
     # ---------- Region 1: growing memory ----------
@@ -57,12 +92,13 @@ function compute!(method::GL, ws::NumDiffWorkspace, data::Vector{NumDiffFloat}, 
     end
 end
 
-function compute!(method::GLThreads, ws::NumDiffWorkspace, data::Vector{NumDiffFloat}, prob::NumDiffProblem)
+function compute!(method::GLShortMemThreads, ws::NumDiffWorkspace, data::Vector{NumDiffFloat}, prob::NumDiffProblem)
     n  = prob.n
     α  = prob.order
     dt = prob.dt
-    L  = method.L
     weights = ws.weights
+    optimal_L!(data,prob)
+    L=prob._L
 
     inv_dt_pow = 1.0 / (dt^prob.order)
 
@@ -91,8 +127,9 @@ function compute!(method::GLShortMemCorr, ws::NumDiffWorkspace, data::Vector{Num
     n  = prob.n
     α  = prob.order
     dt = prob.dt
-    L  = method.L
     weights = ws.weights
+    optimal_L!(data,prob)
+    L=prob._L
 
     inv_dt_pow = 1.0 / (dt^α)
     one_minus_order = 1.0 - α
@@ -148,8 +185,9 @@ function compute!(method::GLShortMemCorrThreads, ws::NumDiffWorkspace, data::Vec
     n  = prob.n
     α  = prob.order
     dt = prob.dt
-    L  = method.L
     weights = ws.weights
+    optimal_L!(data,prob)
+    L=prob._L
 
     inv_dt_pow = 1.0 / (dt^α)
     one_minus_order = 1.0 - α

@@ -9,7 +9,7 @@
     - `prob::NumDiffProblem` : numerical differentiation problem definition
     - `ws::NumDiffWorkspace` : workspace containing preallocated `weights` vector (length ≥ `prob.n`)
 """
-function generate_weights!(::Union{RL, RLThreads, RLShortMemCorr, RLShortMemCorrThreads}, prob::NumDiffProblem, ws::NumDiffWorkspace)
+function generate_weights!(::Union{RL, RLThreads,RLShortMem,RLShortMemThreads, RLShortMemCorr, RLShortMemCorrThreads}, prob::NumDiffProblem, ws::NumDiffWorkspace)
     
     alpha = 1.0 - prob.order
     n = prob.n
@@ -38,13 +38,6 @@ end
     1. **Serial version** (`method::RL`) 
     2. **Parallel version** (`method::RLThreads`) 
 
-    # Short-memory option
-
-    Both serial and threaded versions support the short-memory approximation: if `method.L < prob.n`,  
-    the computation uses only the last `L` points of `data` for indices `i > L` (fixed memory).  
-    For `i <= L`, the algorithm uses all available past points (`i` points, growing memory).  
-    If `method.L` is set to `typemax(Int)` or a value ≥ `prob.n`, the full memory algorithm is used.
-
     # Arguments
 
     - `method::RL` or `RLThreads`: Method descriptor. Must contain field `L::NumDiffInt` specifying 
@@ -59,13 +52,70 @@ end
 
     - `ws.deriv` updated **in-place** with the computed fractional derivative.
 """
-
 function compute!(method::RL, ws::NumDiffWorkspace, data::Vector{NumDiffFloat}, prob::NumDiffProblem)
 
     n  = prob.n
     α  = prob.order
     dt = prob.dt
-    L  = method.L
+
+    weights = ws.weights
+
+    C = dt^(-α) / gamma(2.0 - α)
+
+    @inbounds ws.deriv[1] = C * weights[1] * data[1]
+
+    @inbounds for i in 2:n
+        acc = zero(NumDiffFloat)
+
+        for j in 1:i
+            acc += weights[j] * data[i-j+1]
+        end
+
+        ws.deriv[i] = C * acc
+    end
+
+
+end
+
+function compute!(method::RLThreads, ws::NumDiffWorkspace, data::Vector{NumDiffFloat}, prob::NumDiffProblem)
+
+    n  = prob.n
+    α  = prob.order
+    dt = prob.dt
+
+    weights = ws.weights
+
+    C = dt^(-α) / gamma(2.0 - α)
+
+    # first element is scalar, no threading needed
+    @inbounds ws.deriv[1] = C * weights[1] * data[1]
+
+    @threads :dynamic for i in 2:n
+        acc = zero(NumDiffFloat)
+        @simd for j in 1:i
+            @inbounds acc += weights[j] * data[i-j+1]
+        end
+        @inbounds ws.deriv[i] = C * acc
+    end
+end
+
+"""
+# Short-memory option
+
+Both serial and threaded versions support the short-memory approximation: if `prob._L < prob.n`,  
+the computation uses only the last `L` points of `data` for indices `i > L` (fixed memory).  
+For `i <= L`, the algorithm uses all available past points (`i` points, growing memory).  
+If `prob._L` is set to `typemax(Int)` or a value ≥ `prob.n`, the full memory algorithm is used.
+
+"""
+
+function compute!(method::RLShortMem, ws::NumDiffWorkspace, data::Vector{NumDiffFloat}, prob::NumDiffProblem)
+
+    n  = prob.n
+    α  = prob.order
+    dt = prob.dt
+    optimal_L!(data,prob)
+    L=prob._L
 
     weights = ws.weights
 
@@ -101,13 +151,13 @@ function compute!(method::RL, ws::NumDiffWorkspace, data::Vector{NumDiffFloat}, 
 
 end
 
-function compute!(method::RLThreads, ws::NumDiffWorkspace, data::Vector{NumDiffFloat}, prob::NumDiffProblem)
+function compute!(method::RLShortMemThreads, ws::NumDiffWorkspace, data::Vector{NumDiffFloat}, prob::NumDiffProblem)
 
     n  = prob.n
     α  = prob.order
     dt = prob.dt
-    L  = method.L
-
+    optimal_L!(data,prob)
+    L=prob._L
     weights = ws.weights
 
     C = dt^(-α) / gamma(2.0 - α)
@@ -173,8 +223,9 @@ function compute!(method::RLShortMemCorr, ws::NumDiffWorkspace, data::Vector{Num
     n  = prob.n
     order  = prob.order
     dt = prob.dt
-    L  = method.L
     weights = ws.weights
+    optimal_L!(data,prob)
+    L=prob._L
 
     # Precompute constants
     C = dt^(-order) / gamma(2.0 - order)
@@ -229,8 +280,9 @@ function compute!(method::RLShortMemCorrThreads, ws::NumDiffWorkspace, data::Vec
     n  = prob.n
     order  = prob.order
     dt = prob.dt
-    L  = method.L
     weights = ws.weights
+    optimal_L!(data,prob)
+    L  = prob._L
 
     # Precompute constants
     C = dt^(-order) / gamma(2.0 - order)

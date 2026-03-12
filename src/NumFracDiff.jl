@@ -21,7 +21,7 @@ module NumFracDiff
     export NumDiffProblem, NumDiffWorkspace, DiffMethod
     export Caputo, CaputoThreads
     export GL, GLThreads, GLShortMem, GLShortMemThreads, GLShortMemCorr, GLShortMemCorrThreads
-    export RL, RLThreads, RLShortMemCorr, RLShortMemCorrThreads
+    export RL, RLThreads, RLShortMem, RLShortMemThreads, RLShortMemCorr, RLShortMemCorrThreads
 
     # base.jl
     export init_workspace, optimal_L!, update_order!

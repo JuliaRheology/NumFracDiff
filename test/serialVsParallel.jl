@@ -23,11 +23,10 @@ absdiff(a, b) = maximum(abs.(a .- b))
 # Test GL derivative
 # -----------------------------
 @testset "GL derivative" begin
-    L_full = typemax(Int)  # full memory
-    prob_gl = NumDiffProblem(dt=dt, order=α, n=N, method=GL(L_full))
+    prob_gl = NumDiffProblem(dt=dt, order=α, n=N, method=GL())
     ws_gl   = init_workspace(prob_gl)
 
-    prob_rl_threads = NumDiffProblem(dt=dt, order=α, n=N, method=GLThreads(L_full))
+    prob_rl_threads = NumDiffProblem(dt=dt, order=α, n=N, method=GLThreads())
     ws_gl_threads   = init_workspace(prob_rl_threads)
 
     compute!(prob_gl.method, ws_gl, data, prob_gl)
@@ -47,11 +46,10 @@ end
 # Test GL short-memory
 # -----------------------------
 @testset "GL Short-Memory" begin
-    L_short = 50
-    prob_gl_short = NumDiffProblem(dt=dt, order=α, n=N, method=GL(L_short))
+    prob_gl_short = NumDiffProblem(dt=dt, order=α, n=N, method=GLShortMem())
     ws_gl_short   = init_workspace(prob_gl_short)
 
-    prob_gl_short_threads = NumDiffProblem(dt=dt, order=α, n=N, method=GLThreads(L_short))
+    prob_gl_short_threads = NumDiffProblem(dt=dt, order=α, n=N, method=GLShortMemThreads())
     ws_gl_short_threads   = init_workspace(prob_gl_short_threads)
 
     compute!(prob_gl_short.method, ws_gl_short, data, prob_gl_short)
@@ -71,11 +69,10 @@ end
 # Test GL Short-Memory with Correction
 # -----------------------------
 @testset "GL Short-Memory with Correction" begin
-    L_corr = 50  # short-memory length
-    prob_gl_corr = NumDiffProblem(dt=dt, order=α, n=N, method=GLShortMemCorr(L_corr))
+    prob_gl_corr = NumDiffProblem(dt=dt, order=α, n=N, method=GLShortMemCorr())
     ws_gl_corr   = init_workspace(prob_gl_corr)
 
-    prob_gl_corr_threads = NumDiffProblem(dt=dt, order=α, n=N, method=GLShortMemCorrThreads(L_corr))
+    prob_gl_corr_threads = NumDiffProblem(dt=dt, order=α, n=N, method=GLShortMemCorrThreads())
     ws_gl_corr_threads   = init_workspace(prob_gl_corr_threads)
 
     # Compute serial and parallel derivatives
@@ -120,11 +117,10 @@ end
 # Test RL derivative
 # -----------------------------
 @testset "RL derivative" begin
-    L_full = typemax(Int)  # full memory
-    prob_rl = NumDiffProblem(dt=dt, order=α, n=N, method=RL(L_full))
+    prob_rl = NumDiffProblem(dt=dt, order=α, n=N, method=RL())
     ws_rl   = init_workspace(prob_rl)
 
-    prob_rl_threads = NumDiffProblem(dt=dt, order=α, n=N, method=RLThreads(L_full))
+    prob_rl_threads = NumDiffProblem(dt=dt, order=α, n=N, method=RLThreads())
     ws_rl_threads   = init_workspace(prob_rl_threads)
 
     compute!(prob_rl.method, ws_rl, data, prob_rl)
@@ -144,11 +140,10 @@ end
 # Test RL short-memory
 # -----------------------------
 @testset "RL Short-Memory" begin
-    L_short = 50
-    prob_rl_short = NumDiffProblem(dt=dt, order=α, n=N, method=RL(L_short))
+    prob_rl_short = NumDiffProblem(dt=dt, order=α, n=N, method=RLShortMem())
     ws_rl_short   = init_workspace(prob_rl_short)
 
-    prob_rl_short_threads = NumDiffProblem(dt=dt, order=α, n=N, method=RLThreads(L_short))
+    prob_rl_short_threads = NumDiffProblem(dt=dt, order=α, n=N, method=RLShortMemThreads())
     ws_rl_short_threads   = init_workspace(prob_rl_short_threads)
 
     compute!(prob_rl_short.method, ws_rl_short, data, prob_rl_short)
@@ -168,11 +163,10 @@ end
 # Test RL Short-Memory with Correction
 # -----------------------------
 @testset "RL Short-Memory with Correction" begin
-    L_corr = 50  # short-memory length
-    prob_rl_corr = NumDiffProblem(dt=dt, order=α, n=N, method=RLShortMemCorr(L_corr))
+    prob_rl_corr = NumDiffProblem(dt=dt, order=α, n=N, method=RLShortMemCorr())
     ws_rl_corr   = init_workspace(prob_rl_corr)
 
-    prob_rl_corr_threads = NumDiffProblem(dt=dt, order=α, n=N, method=RLShortMemCorrThreads(L_corr))
+    prob_rl_corr_threads = NumDiffProblem(dt=dt, order=α, n=N, method=RLShortMemCorrThreads())
     ws_rl_corr_threads   = init_workspace(prob_rl_corr_threads)
 
     # Compute serial and parallel derivatives

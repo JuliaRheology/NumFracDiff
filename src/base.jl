@@ -55,8 +55,12 @@ function optimal_L!(data::Vector{NumDiffFloat}, prob::NumDiffProblem; tol::Float
     method = prob.method
 
     if !(method isa Union{
-            RL,
-            RLThreads,
+            GLShortMem,
+            GLShortMemThreads,
+            GLShortMemCorr,
+            GLShortMemCorrThreads,
+            RLShortMem,
+            RLShortMemThreads,
             RLShortMemCorr,
             RLShortMemCorrThreads
         })
@@ -83,7 +87,7 @@ function optimal_L!(data::Vector{NumDiffFloat}, prob::NumDiffProblem; tol::Float
     # clamp to reasonable bounds
     L = clamp(L, Int(length(data) ÷ 10), length(data))
 
-    method.L = L
+    prob._L = L
 
 end
 

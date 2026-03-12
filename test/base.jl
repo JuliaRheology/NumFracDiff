@@ -9,70 +9,55 @@
     ramp = convert(Vector{NumDiffFloat}, 1e-2 .* collect(0:dt:(n-1)*dt))
     constant  = ones(NumDiffFloat, n)
     zerosig   = zeros(NumDiffFloat, n)
-    bigsignal = 10 .* ramp
+    bigsignal = 10 .* ramp    
 
-    L = convert(NumDiffInt, 100)
-
-    rl_methods = [
-        RL(L),
-        RLThreads(L),
-        RLShortMemCorr(L),
-        RLShortMemCorrThreads(L)
-    ]
-
-    non_rl_methods = [
-        Caputo(),
-        CaputoThreads()
+    sm_methods = [
+        GLShortMem(),
+        GLShortMemThreads(),
+        GLShortMemCorr(),
+        GLShortMemCorrThreads(),
+        RLShortMem(),
+        RLShortMemThreads(),
+        RLShortMemCorr(),
+        RLShortMemCorrThreads()
     ]
 
      # -----------------------------
     # RL methods should set L
     # -----------------------------
-    for method in rl_methods
+    for method in sm_methods
         prob = NumDiffProblem(dt=dt, order=α, n=n, method=method)
 
         optimal_L!(ramp, prob; tol=1e-2)
 
-        @test hasfield(typeof(prob.method), :L)
-        @test prob.method.L isa NumDiffInt
-        @test 1 ≤ prob.method.L ≤ n
-    end
-
-    # -----------------------------
-    # Non-RL methods should not set L
-    # -----------------------------
-    for method in non_rl_methods
-        prob = NumDiffProblem(dt=dt, order=α, n=n, method=method)
-
-        optimal_L!(ramp, prob; tol=1e-2)
-
-        # Since optimal_L! returns early with a warning, L should not exist or stay undefined
-        @test !hasfield(typeof(prob.method), :L) || prob.method.L === nothing
+        @test hasfield(typeof(prob), :_L)
+        @test prob._L isa NumDiffInt
+        @test 1 ≤ prob._L ≤ n
     end
 
     # -----------------------------
     # Larger amplitude → larger L
     # -----------------------------
-    prob1 = NumDiffProblem(dt=dt, order=α, n=n, method=RL())
+    prob1 = NumDiffProblem(dt=dt, order=α, n=n, method=RLShortMem())
     optimal_L!(ramp, prob1; tol=1e-2)
-    L1 = prob1.method.L
+    L1 = prob1._L
 
-    prob2 = NumDiffProblem(dt=dt, order=α, n=n, method=RL())
+    prob2 = NumDiffProblem(dt=dt, order=α, n=n, method=RLShortMem())
     optimal_L!(bigsignal, prob2; tol=1e-2)
-    L2 = prob2.method.L
+    L2 = prob2._L
 
     @test L2 > L1
 
     # -----------------------------
     # Tighter tolerance → larger L
     # -----------------------------
-    prob_loose = NumDiffProblem(dt=dt, order=α, n=n, method=RL())
+    prob_loose = NumDiffProblem(dt=dt, order=α, n=n, method=RLShortMem())
     optimal_L!(ramp, prob_loose; tol=1e-1)
-    L_loose = prob_loose.method.L
+    L_loose = prob_loose._L
 
-    prob_tight = NumDiffProblem(dt=dt, order=α, n=n, method=RL())
+    prob_tight = NumDiffProblem(dt=dt, order=α, n=n, method=RLShortMem())
     optimal_L!(ramp, prob_tight; tol=1e-3)
-    L_tight = prob_tight.method.L
+    L_tight = prob_tight._L
 
     @test L_tight > L_loose
 
@@ -89,12 +74,20 @@ function test_update_order_methods()
 
     # List of methods to test
     methods = [
+        GL(),
+        GLThreads(),
+        GLShortMem(),
+        GLShortMemThreads(),
+        GLShortMemCorr(),
+        GLShortMemCorrThreads(),
         Caputo(),
         CaputoThreads(),
         RL(),
         RLThreads(),
-        RLShortMemCorr(1000),
-        RLShortMemCorrThreads(1000)
+        RLShortMem(),
+        RLShortMemThreads(),
+        RLShortMemCorr(),
+        RLShortMemCorrThreads()
     ]
 
     for method in methods

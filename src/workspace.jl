@@ -5,64 +5,20 @@ struct Caputo <: DiffMethod end
 struct CaputoThreads <: DiffMethod end
 
 
-mutable struct RL <: DiffMethod
-    L::NumDiffInt
-    # Inner constructor
-    function RL(L::NumDiffInt = typemax(NumDiffInt))
-        new(L)
-    end
-end
-mutable struct RLThreads <: DiffMethod
-    L::NumDiffInt
-    # Inner constructor
-    function RLThreads(L::NumDiffInt = typemax(NumDiffInt))
-        new(L)
-    end
-end
-
-mutable struct RLShortMemCorr <: DiffMethod
-    L::NumDiffInt
-    function RLShortMemCorr(L::NumDiffInt)
-        new(L)
-    end
-end
-mutable struct RLShortMemCorrThreads <: DiffMethod
-    L::NumDiffInt
-    function RLShortMemCorrThreads(L::NumDiffInt)
-        new(L)
-    end
-end
+struct RL <: DiffMethod end
+struct RLThreads <: DiffMethod end
+struct RLShortMem <: DiffMethod end
+struct RLShortMemThreads <: DiffMethod end
+struct RLShortMemCorr <: DiffMethod end
+struct RLShortMemCorrThreads <: DiffMethod end
 
 
-mutable struct GL <: DiffMethod 
-    L::NumDiffInt
-    # Inner constructor
-    function GL(L::NumDiffInt = typemax(NumDiffInt))
-        new(L)
-    end
-end
-
-mutable struct GLThreads <: DiffMethod 
-    L::NumDiffInt
-    # Inner constructor
-    function GLThreads(L::NumDiffInt = typemax(NumDiffInt))
-        new(L)
-    end
-end
-
-mutable struct GLShortMemCorr <: DiffMethod 
-    L::NumDiffInt
-    function GLShortMemCorr(L::NumDiffInt)
-        new(L)
-    end
-end
-
-mutable struct GLShortMemCorrThreads <: DiffMethod 
-    L::NumDiffInt
-    function GLShortMemCorrThreads(L::NumDiffInt)
-        new(L)
-    end
-end
+struct GL <: DiffMethod end
+struct GLThreads <: DiffMethod end
+struct GLShortMem <: DiffMethod end
+struct GLShortMemThreads <: DiffMethod end
+struct GLShortMemCorr <: DiffMethod  end
+struct GLShortMemCorrThreads <: DiffMethod end
 
 
 """
@@ -93,10 +49,11 @@ mutable struct NumDiffProblem{NumDiffFloat}
     order::NumDiffFloat
     n::NumDiffInt             # Length of the vector to be differentiated
     method::DiffMethod
+    _L::NumDiffInt
 
     # Keyword constructor
     function NumDiffProblem(; dt::NumDiffFloat, order::NumDiffFloat, n::NumDiffInt, method::DiffMethod)
-        new{NumDiffFloat}(dt, order, n, method)
+        new{NumDiffFloat}(dt, order, n, method, n)
     end
 
 end
