@@ -103,10 +103,12 @@ end
 """
 
 function update_order!(prob, ws, order_new)
-    # Ensure the new order is different from the current one
-    @assert order_new != prob.order "New derivative order is the same as current one"
+    # If the order is the same, keep existing weights and continue
+    if order_new == prob.order
+        return
+    end
 
-    # Update the order and regenerate weights
+    # Otherwise update order and regenerate weights
     prob.order = order_new
     generate_weights!(prob.method, prob, ws)
 end
