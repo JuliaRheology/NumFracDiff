@@ -107,14 +107,12 @@ function test_update_order_methods()
             # Test that weights are regenerated
             @test !all(ws.weights .== original_weights)
 
-            # Test that assertion triggers if same order is passed again
-            err = try
-                update_order!(prob, ws, new_order)
-                false
-            catch e
-                e isa AssertionError
-            end
-            @test err == true
+            # Test that calling with the same order does nothing
+            old_weights = copy(ws.weights)
+            old_order   = prob.order
+            update_order!(prob, ws, old_order)
+            @test prob.order == old_order
+            @test all(ws.weights .== old_weights)
         end
     end
 end

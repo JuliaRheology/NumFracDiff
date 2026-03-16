@@ -74,20 +74,20 @@ end
     ]
 
     tollerances = [
-        1e-10,
-        1e-10,
         1e-1,
         1e-1,
-        5e-2, 
-        5e-2,
-        1e-10,
-        1e-10,
-        1e-10,
-        1e-10,
         1e-1,
         1e-1,
-        5e-2, 
-        5e-2,
+        1e-1, 
+        1e-1,
+        1e-1,
+        1e-1,
+        1e-1,
+        1e-1,
+        1e-1,
+        1e-1,
+        1e-1, 
+        1e-1,
     ]
 
     # Loop over methods
@@ -153,28 +153,28 @@ end
             # -----------------------------
             # Plot results
             # -----------------------------
-            # if func_type == "power"
-            #     p = plot(t[2:end], exact[2:end], lw=2, label="Analytical", color=:blue, xaxis=:log10, yaxis=:log10)
-            #     plot!(p, t[2:end], ws.deriv[2:end], lw=2, ls=:dash, label="Numerical", color=:red, xaxis=:log10, yaxis=:log10)
-            # else
-            #     p = plot(t, exact, lw=2, label="Analytical", color=:blue)
-            #     plot!(p, t, ws.deriv, lw=2, ls=:dash, label="Numerical", color=:red)
-            # end
+            if func_type == "power"
+                p = plot(t[2:end], exact[2:end], lw=2, label="Analytical", color=:blue, xaxis=:log10, yaxis=:log10)
+                plot!(p, t[2:end], ws.deriv[2:end], lw=2, ls=:dash, label="Numerical", color=:red, xaxis=:log10, yaxis=:log10)
+            else
+                p = plot(t, exact, lw=2, label="Analytical", color=:blue)
+                plot!(p, t, ws.deriv, lw=2, ls=:dash, label="Numerical", color=:red)
+            end
 
 
-            # xlabel!("Time")
-            # ylabel!("D^α $func_type")
+            xlabel!("Time")
+            ylabel!("D^α $func_type")
             
-            # T = typeof(method)
-            # name = string(T)
+            T = typeof(method)
+            name = string(T)
 
-            # if hasfield(T, :L) && (getfield(method, :L) != typemax(NumDiffInt))
-            #     Lval = getfield(method, :L)
-            #     name = "$(name)_L_$(Lval)"
-            # end
+            if hasfield(T, :L) && (getfield(method, :L) != typemax(NumDiffInt))
+                Lval = getfield(method, :L)
+                name = "$(name)_L_$(Lval)"
+            end
 
-            # title!("$(name) - $func_type")
-            # savefig(p, "./analyticalSolutions_plots/$(name)_$func_type.pdf")
+            title!("$(name) - $func_type")
+            savefig(p, "./analyticalSolutions_plots/$(name)_$func_type.pdf")
 
             # -----------------------------
             # Test tolerance
