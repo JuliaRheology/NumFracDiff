@@ -19,6 +19,7 @@ struct GLShortMem <: DiffMethod end
 struct GLShortMemThreads <: DiffMethod end
 struct GLShortMemCorr <: DiffMethod  end
 struct GLShortMemCorrThreads <: DiffMethod end
+struct GLFFT <: DiffMethod end
 
 
 """

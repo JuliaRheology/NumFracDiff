@@ -16,7 +16,7 @@
 
 """
 
-function generate_weights!(::Union{GL,GLThreads,GLShortMem,GLShortMemThreads,GLShortMemCorr,GLShortMemCorrThreads}, prob::NumDiffProblem, ws::NumDiffWorkspace)
+function generate_weights!(::Union{GL,GLFFT,GLThreads,GLShortMem,GLShortMemThreads,GLShortMemCorr,GLShortMemCorrThreads}, prob::NumDiffProblem, ws::NumDiffWorkspace)
     
     ws.weights[1] = 1.0
 
@@ -237,4 +237,16 @@ function compute!(method::GLShortMemCorrThreads, ws::NumDiffWorkspace, data::Vec
             ws.deriv[i] = (acc + correction) * inv_dt_pow
         end
     end
+end
+
+
+function compute!(method::GLFFT, ws::NumDiffWorkspace, data::Vector{NumDiffFloat}, prob::NumDiffProblem)
+    deriv = fftfilt(ws.weights, data)
+    
+    inv_dt_pow = 1.0 / (prob.dt^prob.order)
+    for i in eachindex(ws.deriv)
+        ws.deriv[i] = deriv[i] * inv_dt_pow
+    end
+    
+    
 end

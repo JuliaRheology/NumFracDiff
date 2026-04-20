@@ -58,6 +58,7 @@ end
     # Define the derivative methods you want to test
     methods = [
         GL(),
+        GLFFT(),
         GLThreads(),
         GLShortMem(),
         GLShortMemThreads(),
@@ -74,6 +75,7 @@ end
     ]
 
     tollerances = [
+        1e-10,
         1e-10,
         1e-10,
         1e-1,

@@ -20,7 +20,7 @@ module NumFracDiff
     # workspace.jl
     export NumDiffProblem, NumDiffWorkspace, DiffMethod
     export Caputo, CaputoThreads
-    export GL, GLThreads, GLShortMem, GLShortMemThreads, GLShortMemCorr, GLShortMemCorrThreads
+    export GL, GLThreads, GLShortMem, GLShortMemThreads, GLShortMemCorr, GLShortMemCorrThreads, GLFFT
     export RL, RLThreads, RLShortMem, RLShortMemThreads, RLShortMemCorr, RLShortMemCorrThreads
 
     # base.jl
