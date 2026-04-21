@@ -18,17 +18,17 @@
     - `weights` : Precomputed convolution weights.
     - `deriv` : Preallocated vector for storing the derivative.
 """
-function init_workspace(prob::NumDiffProblem)
+function init_workspace(prob::NumDiffProblem; L::Int64 = prob.n)
 
     # Preallocate workspace buffers
-    weights = zeros(NumDiffFloat, prob.n)
-    deriv   = zeros(NumDiffFloat, prob.n)
+    weights = zeros(NumDiffFloat, L)
+    deriv   = zeros(NumDiffFloat, L)
 
     # Create workspace structure
     ws = NumDiffWorkspace(weights, deriv)
 
     # Fill weights in-place
-    generate_weights!(prob.method, prob, ws)
+    generate_weights!(prob.method, prob, ws, L=L)
 
     return ws
 end

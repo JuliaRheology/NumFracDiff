@@ -15,12 +15,12 @@
 
 """
 
-function generate_weights!(::Union{Caputo, CaputoThreads}, prob::NumDiffProblem, ws::NumDiffWorkspace)
+function generate_weights!(::Union{Caputo, CaputoThreads}, prob::NumDiffProblem, ws::NumDiffWorkspace;L::Int64=prob.n)
     α = 1.0 - prob.order
     ws.weights[1] = 1.0  # first weight
     prev_pow = 1.0       # start with 1^α
 
-    for k in 2:prob.n
+    for k in 2:L
         curr_pow = k^α
         ws.weights[k] = curr_pow - prev_pow
         prev_pow = curr_pow

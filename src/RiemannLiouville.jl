@@ -9,17 +9,16 @@
     - `prob::NumDiffProblem` : numerical differentiation problem definition
     - `ws::NumDiffWorkspace` : workspace containing preallocated `weights` vector (length ≥ `prob.n`)
 """
-function generate_weights!(::Union{RL, RLThreads,RLShortMem,RLShortMemThreads, RLShortMemCorr, RLShortMemCorrThreads}, prob::NumDiffProblem, ws::NumDiffWorkspace)
+function generate_weights!(::Union{RL, RLThreads,RLShortMem,RLShortMemThreads, RLShortMemCorr, RLShortMemCorrThreads}, prob::NumDiffProblem, ws::NumDiffWorkspace;L::Int64=prob.n)
     
     alpha = 1.0 - prob.order
-    n = prob.n
 
     ws.weights[1] = 1.0
 
     p1 = 0.0   # (0.0^alpha)
     p2 = 1.0   # (1.0^alpha)
 
-    for j in 2:n
+    for j in 2:L
         p3 = j^alpha
         ws.weights[j] = p3 - 2.0*p2 + p1
         

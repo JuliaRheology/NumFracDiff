@@ -16,13 +16,13 @@
 
 """
 
-function generate_weights!(::Union{GL,GLFFT,GLThreads,GLShortMem,GLShortMemThreads,GLShortMemCorr,GLShortMemCorrThreads}, prob::NumDiffProblem, ws::NumDiffWorkspace)
+function generate_weights!(::Union{GL,GLFFT,GLThreads,GLShortMem,GLShortMemThreads,GLShortMemCorr,GLShortMemCorrThreads}, prob::NumDiffProblem, ws::NumDiffWorkspace; L::Int64 =prob.n)
     
     ws.weights[1] = 1.0
 
     alpha_plus_one = prob.order + 1.0
     
-    for k in 2:prob.n
+    for k in 2:L
         ws.weights[k] = ws.weights[k-1] * (1.0 - alpha_plus_one/(k - 1.0)) 
     end
 
