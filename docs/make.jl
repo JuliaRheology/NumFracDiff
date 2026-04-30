@@ -28,7 +28,7 @@ function docprepare()
                     "docs/src/$file",
                     "docs/staging-docs/";
                     documenter = true,
-                    repo_root_url = "https://github.com/JuliaRheology/RHEOS.jl", 
+                    repo_root_url = "https://github.com/JuliaRheology/NumFracDiff", 
 
                 )
         end
@@ -55,7 +55,7 @@ function maindocbuilder()
     )
 
     deploydocs(;
-        repo="https://github.com/JuliaRheology/NumFracDiff",
+        repo="https://github.com/JuliaRheology/NumFracDiff.git",
         devbranch="Documentation",
         deps = nothing,
         make = nothing,
