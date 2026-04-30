@@ -10,11 +10,11 @@ function docprepare()
     mkdir("docs/staging-docs")
 
     # copy readme to staging-docs, remove Logo image
-    write("docs/staging-docs/index.md", 
-            open("README.md") do input
-                # readuntil(input, "<!-- delim -->", keep = true)
-                read(input)
-            end)
+    # write("docs/staging-docs/index.md", 
+    #         open("README.md") do input
+    #             # readuntil(input, "<!-- delim -->", keep = true)
+    #             read(input)
+    #         end)
     
     # copy assets to staging directory
     # cp("docs/src/assets", "docs/staging-docs/assets")
