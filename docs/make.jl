@@ -1,5 +1,6 @@
 using NumFracDiff
 using Documenter
+using Literate
 
 DocMeta.setdocmeta!(NumFracDiff, :DocTestSetup, :(using NumFracDiff); recursive=true)
 
