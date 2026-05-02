@@ -52,6 +52,7 @@ function maindocbuilder()
         # ),
         pages=[
             "Home" => "index.md",
+            "Architecture" => "Architecture.jl",
         ],
     )
 
