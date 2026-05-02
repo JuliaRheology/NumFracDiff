@@ -1,3 +1,9 @@
 [deps]
 Documenter = "e30172f5-a6a5-5a46-863b-614d45cd2de4"
 NumFracDiff = "aa3e53b5-81b3-45b9-a5b1-5429ac742d4d"
+
+[sources]
+NumFracDiff = {rev = "main", url = "https://github.com/JuliaRheology/NumFracDiff.git"}
+
+[compat]
+NumFracDiff = "1.0.0"
