@@ -55,7 +55,7 @@ function maindocbuilder()
     )
 
     deploydocs(;
-        repo="https://github.com/JuliaRheology/NumFracDiff.git",
+        repo="github.com/JuliaRheology/NumFracDiff.git",
         devbranch="Documentation",
         deps = nothing,
         make = nothing,
