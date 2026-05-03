@@ -10,10 +10,10 @@ using Plots
 #text
 
 ##Commented test code
-foo = timeline(t_start = 0, t_end = 10, step = 0.4)
-foo = strainfunction(foo, t -> sin(t))
+x = 0:0.4:1.0
+y = x.*2
 plt = plot(size = (500, 500))
-plot!(plt, foo.t, foo.ϵ,
+plot!(plt, x, y,
       linestyle=:dash,
       marker=:circle,
       markersize=8,
