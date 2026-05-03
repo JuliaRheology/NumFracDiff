@@ -29,7 +29,7 @@ function docprepare()
                     "docs/src/$file",
                     "docs/staging-docs/";
                     documenter = true,
-                    repo_root_url = "https://github.com/JuliaRheology/NumFracDiff", 
+                    repo_root_url = "github.com/JuliaRheology/NumFracDiff", 
 
                 )
         end
@@ -42,7 +42,7 @@ function maindocbuilder()
     makedocs(;
         modules=[NumFracDiff],
         authors="Lorenzo Fonnesu, Andrea Grassi, Alessandra Bonfanti, Alexandre Kabla",
-        repo="https://github.com/JuliaRheology/NumFracDiff",
+        repo="github.com/JuliaRheology/NumFracDiff",
         sitename="NumFracDiff.jl",
         source="staging-docs",
         format=Documenter.HTML(),#;
@@ -52,7 +52,7 @@ function maindocbuilder()
         # ),
         pages=[
             "Home" => "index.md",
-            "Architecture" => "Architecture.jl",
+            "Architecture" => "Architecture.md",
         ],
     )
 
