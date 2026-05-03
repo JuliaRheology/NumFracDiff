@@ -53,6 +53,10 @@ function maindocbuilder()
         pages=[
             "Home" => "index.md",
             "Architecture" => "Architecture.md",
+            "Numerical Methods" => ["GL" => "gl.md",
+                                    "RL" => "rl.md",
+                                    "Caputo" => "caputo.md"],
+            "Usage" => "usage.md"
         ],
     )
 
