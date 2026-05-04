@@ -27,7 +27,7 @@ plot!(plt, x, WorkSpace.deriv,
       label="f'(x)", 
       framestyle = :box) 
 
-update_order!(Problem,ws,0.5)
+update_order!(Problem,WorkSpace,0.5)
 compute!(Problem.method,WorkSpace,y,Problem)
 
 plot!(plt, x, WorkSpace.deriv,
