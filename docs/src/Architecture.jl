@@ -36,8 +36,7 @@ struct GLFFT <: DiffMethod end
 # -order::NumDiffFloat: Derivative order. Can be negative as well for fraction integrals
 # -n::NumDiffInt: Expected length of the input data to derive.
 # -method::DiffMethod:  Method for differentiation
-# -L::NumDiffInt: parameter set automatically, usually same as n or shorter for "Short Memory" methods
-mutable struct NumDiffProblem{NumDiffFloat}
+mutable struct NumDiffProblem{NumDiffFloat, NumDiffInt}
     dt::NumDiffFloat
     order::NumDiffFloat
     n::NumDiffInt
@@ -45,8 +44,8 @@ mutable struct NumDiffProblem{NumDiffFloat}
     _L::NumDiffInt
 
     # Keyword constructor
-    function NumDiffProblem(; dt::NumDiffFloat, order::NumDiffFloat, n::NumDiffInt, method::DiffMethod)
-        new{NumDiffFloat}(dt, order, n, method, n)
+    function NumDiffProblem(; dt::NumDiffFloat, order::NumDiffFloat, n::NumDiffInt, method::DiffMethod) where {NumDiffFloat, NumDiffInt}
+        new{NumDiffFloat,NumDiffInt}(dt, order, n, method, n)
     end
 
 end
