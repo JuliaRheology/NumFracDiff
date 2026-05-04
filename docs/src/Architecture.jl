@@ -32,10 +32,10 @@ struct GLFFT <: DiffMethod end
 # ## Problem
 # Mutable data structure representing the defition of the numerical differentiation problem we want to solve.
 # The structure contains the parameters needed:
-# -dt::NumDiffFloat: Sampling interval (Must be constant!)
-# -order::NumDiffFloat: Derivative order. Can be negative as well for fraction integrals
-# -n::NumDiffInt: Expected length of the input data to derive.
-# -method::DiffMethod:  Method for differentiation
+# -dt::NumDiffFloat: Sampling interval (Must be constant!)  <br>
+# -order::NumDiffFloat: Derivative order. Can be negative as well for fraction integrals  <br>
+# -n::NumDiffInt: Expected length of the input data to derive.  <br>
+# -method::DiffMethod:  Method for differentiation  
 mutable struct NumDiffProblem{NumDiffFloat, NumDiffInt}
     dt::NumDiffFloat
     order::NumDiffFloat
