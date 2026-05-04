@@ -4,7 +4,7 @@
 # The library needs a set of data on how to perform the derivative of an input vector of size wrt of time.
 
 # ## DiffMethod
-# The library offers 3 main types of derivative methods: Grumwald-Letnikov, Caputo and Riemann-Liovuille.
+# The library offers 3 main types of derivative methods: Grünwald-Letnikov, Caputo and Riemann-Liovuille.
 # Method choice is handled by defining all the types as sub-structs of an abstract struct DiffMethod, so we can dispatch the compute functions based on DiffMethod typing.
 # A more in-depth section for the methods is reported later in the Documentation
 abstract type DiffMethod end
