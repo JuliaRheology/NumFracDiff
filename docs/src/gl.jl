@@ -1,7 +1,7 @@
-# # Grumwald-Letnikov
+# # Grünwald-Letnikov
 
-### Mathematical Definition
-# The Grünwald-Letnikov fractional derivative of order α of a function f(t) is defined as the limit of the sum:
+# ### Mathematical Definition
+# The Grünwald-Letnikov fractional derivative of order $α$ of a function $f(t)$ is defined as the limit of the sum:
 # ```math
 # D^{α} f(t) = \lim_{h \to 0} \frac{1}{h^α} \sum_{k=0}^n ω_k^{(α)} f(t - kh)
 # ```
