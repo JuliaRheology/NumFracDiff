@@ -42,12 +42,6 @@ mutable struct NumDiffProblem{NumDiffFloat, NumDiffInt}
     n::NumDiffInt
     method::DiffMethod
     _L::NumDiffInt
-
-    # Keyword constructor
-    function NumDiffProblem(; dt::NumDiffFloat, order::NumDiffFloat, n::NumDiffInt, method::DiffMethod) where {NumDiffFloat, NumDiffInt}
-        new{NumDiffFloat,NumDiffInt}(dt, order, n, method, n)
-    end
-
 end
 
 
