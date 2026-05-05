@@ -1,5 +1,7 @@
 # # Grünwald-Letnikov
 
+using NumFracDiff
+
 # ### Mathematical Definition
 
 # The Grünwald-Letnikov fractional derivative of order $α$ of a function $f(t)$ is defined as the limit of the sum:
@@ -12,10 +14,11 @@
 
 # and can be computed efficiently using the function [`generate_weights!`](@ref).
 
-weights = zeros(NumDiffFloat, L)
-deriv = zeros(NumDiffFloat, L)
+prob = NumDiffProblem(dt = 0.01, order = 0.5, n = 1000, method = GL())
+weights = zeros(NumDiffFloat, 1000)
+deriv = zeros(NumDiffFloat, 1000)
 ws = NumDiffWorkspace(weights, deriv)
-generate_weights!(prob.method, prob, ws, L=L)
+generate_weights!(prob.method, prob, ws, L=1000)
 
 # ### Numerical Implementation
 
