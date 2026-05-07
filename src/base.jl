@@ -50,7 +50,7 @@ end
     -------
     Integer memory length (number of time steps).
 """
-function optimal_L!(data::Vector{NumDiffFloat}, prob::NumDiffProblem; tol::Float64 = 1e-2)
+function optimal_L!(data::Vector{NumDiffFloat}, prob::NumDiffProblem; tol::Float64 = 1e-1)
                    
     method = prob.method
 
