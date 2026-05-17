@@ -5,7 +5,7 @@ using NumFracDiff
 using Plots
 
 
-#Commented test code
+# ## Firt case
 dt=0.001
 x = collect(0:dt:10.0)
 y = x.^2
@@ -28,8 +28,9 @@ plot!(plt, x, WorkSpace.deriv,
       framestyle = :box) 
 xlabel!("x")
 ylabel!("y")
-#!nb plt #hide
+plt
 
+# ## Second case
 update_order!(Problem,WorkSpace,0.5)
 compute!(Problem.method,WorkSpace,y,Problem)
 plt1 = plot(size = (500, 500))
@@ -47,11 +48,13 @@ compute!(Problem.method,WorkSpace,y,Problem)
 plot!(plt1, x, WorkSpace.deriv,
       linestyle=:dash,
       color=:green,
-      label="f^0.5(x)", 
+      label="f'(x)", 
       framestyle = :box) 
 xlabel!("x")
 ylabel!("y")
-#!nb plt1 #hide
+plt1
+
+# ## Third case
 
 y= x .* 2
 update_order!(Problem,WorkSpace,-0.5)
@@ -65,13 +68,13 @@ plot!(plt2, x, y,
 plot!(plt2, x, WorkSpace.deriv,
       linestyle=:dash,
       color=:green,
-      label="f^0.5(x)", 
+      label="f^(-0.5)(x)", 
       framestyle = :box) 
 compute!(Problem.method,WorkSpace,y,Problem)
 plot!(plt2, x, WorkSpace.deriv,
       linestyle=:dash,
       color=:green,
-      label="f^0.5(x)", 
+      label="f^(-1.0)(x)", 
       framestyle = :box) 
 xlabel!("x")
 ylabel!("y")
