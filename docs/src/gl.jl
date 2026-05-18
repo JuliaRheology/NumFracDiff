@@ -14,10 +14,15 @@ using NumFracDiff
 
 # and can be computed efficiently using the function [`generate_weights!`](@ref).
 
-prob = NumDiffProblem(dt = 0.01, order = 0.5, n = 1000, method = GL())
-weights = zeros(NumDiffFloat, 1000)
-deriv = zeros(NumDiffFloat, 1000)
-ws = NumDiffWorkspace(weights, deriv)
+# Setup the problem parameters
+dt = 0.01
+n_points = 1000
+prob = NumDiffProblem(dt = dt, order = 0.5, n = n_points, method = GL())
+# Generate an input vector using a power function: $f(t) = t^2$
+t = [i * dt for i in 0:(n_points-1)]
+data = t .^ 2
+# Allocate workspace and precompute weights
+ws = NumDiffWorkspace(prob)
 generate_weights!(prob.method, prob, ws, L=1000)
 
 # ### Numerical Implementation
@@ -34,10 +39,13 @@ generate_weights!(prob.method, prob, ws, L=1000)
 # The basic Grünwald-Letnikov method computes the fractional derivative by taking into account the complete history of the dataset. While highly accurate, this approach scales with an asymptotic computational complexity of $\mathcal{O}(n^2)$, where $n$ is the number of data points.
 # The library offers two dispatch types for this full-memory calculation:
 # - `GL()`: The standard, single-threaded sequential implementation.
+prob = NumDiffProblem(dt = dt, order = 0.5, n = n_points, method = GL())
+ws = NumDiffWorkspace(prob)
+compute!(prob.method, ws, data, prob)
 # - `GLThreads()`: A multi-threaded implementation that parallelizes the outer loop using Julia's native task migration (`@threads :dynamic`) and leverages multi-core processors.
-
-compute!(::GL, ::NumDiffWorkspace, ::Vector{NumDiffFloat}, ::NumDiffProblem)
-compute!(::GLThreads, ::NumDiffWorkspace, ::Vector{NumDiffFloat}, ::NumDiffProblem)
+prob = NumDiffProblem(dt = dt, order = 0.5, n = n_points, method = GLThreads())
+ws = NumDiffWorkspace(prob)
+compute!(prob.method, ws, data, prob)
 
 
 # ## GL Short memory
@@ -60,18 +68,28 @@ compute!(::GLThreads, ::NumDiffWorkspace, ::Vector{NumDiffFloat}, ::NumDiffProbl
 
 # The library provides four dispatch types for short memory calculation:
 # - `GLShortMem()`: Standard short-memory truncation, executed sequentially.
+prob = NumDiffProblem(dt = dt, order = 0.5, n = n_points, method = GLShortMem())
+ws = NumDiffWorkspace(prob)
+compute!(prob.method, ws, data, prob)
 # - `GLShortMemThreads()`: Parallelized version of `GLShortMem` using multi-threading (`@threads :dynamic`).
+prob = NumDiffProblem(dt = dt, order = 0.5, n = n_points, method = GLShortMemThreads())
+ws = NumDiffWorkspace(prob)
+compute!(prob.method, ws, data, prob)
 # - `GLShortMemCorr()`: Short-memory truncation with the correction term, executed sequentially.
+prob = NumDiffProblem(dt = dt, order = 0.5, n = n_points, method = GLShortMemCorr())
+ws = NumDiffWorkspace(prob)
+compute!(prob.method, ws, data, prob)
 # - `GLShortMemCorrThreads()`: Parallelized version of `GLShortMemCorr` combining error correction with multi-threading.
-
-compute!(::GLShortMem, ::NumDiffWorkspace, ::Vector{NumDiffFloat}, ::NumDiffProblem)
-compute!(::GLShortMemThreads, ::NumDiffWorkspace, ::Vector{NumDiffFloat}, ::NumDiffProblem)
-compute!(::GLShortMemCorr, ::NumDiffWorkspace, ::Vector{NumDiffFloat}, ::NumDiffProblem)
-compute!(::GLShortMemCorrThreads, ::NumDiffWorkspace, ::Vector{NumDiffFloat}, ::NumDiffProblem)
+prob = NumDiffProblem(dt = dt, order = 0.5, n = n_points, method = GLShortMemCorrThreads())
+ws = NumDiffWorkspace(prob)
+compute!(prob.method, ws, data, prob)
 
 # ## GL FFT
 
 # While the standard full-memory approach has a computational complexity of $\mathcal{O}(n^2)$, the `GLFFT` method accelerates this operation by performing the convolution in the frequency domain.
 
 # By leveraging the Fast Fourier Transform (FFT) via the `fftfilt` function, the asymptotic computational complexity is reduced to $\mathcal{O}(n \log n)$. Unlike the Short Memory Principle, this acceleration does not truncate the past history; it retains `full-memory accuracy` while offering massive performance gains for large datasets.
-compute!(::GLFFT, ::NumDiffWorkspace, ::Vector{NumDiffFloat}, ::NumDiffProblem)
+
+prob = NumDiffProblem(dt = dt, order = 0.5, n = n_points, method = GLFFT())
+ws = NumDiffWorkspace(prob)
+compute!(prob.method, ws, data, prob)
