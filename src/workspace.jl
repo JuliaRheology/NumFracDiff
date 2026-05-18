@@ -1,4 +1,9 @@
+"""
+    DiffMethod
 
+Abstract supertype for specifying numerical differentiation methods 
+(e.g., Grünwald-Letnikov, Caputo, Riemann-Liouville).
+"""
 abstract type DiffMethod end
 
 struct Caputo <: DiffMethod end

@@ -56,7 +56,8 @@ function maindocbuilder()
             "Numerical Methods" => ["GL" => "gl.md",
                                     "RL" => "rl.md",
                                     "Caputo" => "caputo.md"],
-            "Usage" => "usage.md"
+            "Usage" => "usage.md",
+            "API" => "API.md"
         ],
     )
 
