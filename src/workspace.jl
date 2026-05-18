@@ -49,7 +49,6 @@ struct GLFFT <: DiffMethod end
 
     - `method::Symbol`: Numerical differentiation method. Currently supported methods include:  `:caputo`, `:rl`, `:gl`.
 """
-
 mutable struct NumDiffProblem{NumDiffFloat}
     dt::NumDiffFloat
     order::NumDiffFloat
@@ -82,7 +81,6 @@ multiple signals.
 
 - `deriv::Vector{NumDiffFloat}`: Preallocated vector where the computed derivative is stored.
 """
-
 struct NumDiffWorkspace{NumDiffFloat}
     weights::Vector{NumDiffFloat}
     deriv::Vector{NumDiffFloat}
