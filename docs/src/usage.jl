@@ -17,14 +17,14 @@ plot!(plt, x, y,
       linestyle=:dash,
       color=:blue,
       label="f(x)", 
-      framestyle = :box) 
+      framestyle = :box) #hide
 
 # Next we instantiate the needed structures.
 # NumDiffProblem defines the configuration of the derivative, 
 # while Workspace allocates the auxiliary vectors needed for the computation and stores the final result.
 method = GL()
 problem = NumDiffProblem(dt=dt,order=1.0,n=length(y),method=method)
-workspace = init_workspace(problem)
+workspace = init_workspace(problem) #hide
 
 # To execute the computation, invoke the compute! function. This mutates the workspace in-place.
 compute!(y,problem,workspace)
