@@ -14,13 +14,10 @@ using NumFracDiff
 
 # and can be computed efficiently using the function [`generate_weights!`](@ref).
 
-# Setup the problem parameters
 dt = 0.01
 n_points = 1000
-# Generate an input vector using a power function: $f(t) = t^2$
 t = [i * dt for i in 0:(n_points-1)]
 data = t .^ 2
-# Allocate problem and workspace and precompute weights
 prob = NumDiffProblem(dt = dt, order = 0.5, n = n_points, method = GL())
 ws = init_workspace(prob)
 generate_weights!(prob.method, prob, ws, L=1000)
@@ -32,7 +29,7 @@ generate_weights!(prob.method, prob, ws, L=1000)
 # $$D^\alpha f(t_i) \approx \frac{1}{\Delta t^\alpha} \sum_{j=1}^{i} w_{j-1}^{(\alpha)} f(t_{i-j+1})$$
 
 #md # !!! note "Note"
-#md #     The order $\alpha$ can be any real number. When $\alpha > 0$, the operator behaves as a fractional derivative; when $\alpha < 0$, it behaves as a fractional integral.
+#md #     The order $\alpha$ can be any real number. When $\alpha > 0$, the operator behaves as a fractional derivative; when $\alpha < 0$ it behaves as a fractional integral.
 
 # ## GL
 
@@ -52,11 +49,11 @@ compute!(prob.method, ws, data, prob)
 
 # For long time-series or large datasets, the full-history approach of the standard GL method becomes computationally prohibitive. To address this, NumFracDiff implements the Short Memory Principle.
 
-# This principle assumes that the "memory" of the fractional derivative fades over time. Therefore, the calculation at index $i$ is truncated to include only a fixed window of the recent past, defined by an optimal memory length $L$ (determined automatically via `optimal_L!`):
+# This principle assumes that the "memory" of the fractional derivative fades over time. Therefore, the calculation at index $i$ is truncated to include only a fixed window of the recent past, defined by an optimal memory length $L$ (determined automatically via [optimal_L!`](@ref)):
 
 # $$L \ge \left(\left|\frac{M}{\epsilon_0\,\Gamma(1-\alpha)}\right|\right)^\frac{1}{\alpha}$$
 
-# where $\alpha$ is the fractional order, $\epsilon_0$ is the tolerance we set such that $\Delta t<\epsilon_0$ and $M>0$ is a value greater than $|f(t)|$ in the entire domain. This reduces the asymptotic computational complexity from \mathcal{O}(n^2) to \mathcal{O}(n \cdot L).
+# where $\alpha$ is the fractional order, $\epsilon_0$ is the tolerance we set such that $\Delta t<\epsilon_0$ and $M>0$ is a value greater than $|f(t)|$ in the entire domain. This reduces the asymptotic computational complexity from $\mathcal{O}(n^2)$ to $\mathcal{O}(n \cdot L)$.
 
 # When using a short memory method, the computation is split into two regions:
 # 1. `Growing Memory Region` ($i \le L$): The full history is used since the number of available data points is smaller than the memory window $L$.
