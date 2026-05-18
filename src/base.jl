@@ -77,17 +77,20 @@ function optimal_L!(data::Vector{NumDiffFloat}, prob::NumDiffProblem; tol::Float
     # if M == 0
     #     return 1
     # end
+    try
+        # continuous memory length
+        L_cont = (M / (tol * gamma(1 - α)))^(1/α)
 
-    # continuous memory length
-    L_cont = (M / (tol * gamma(1 - α)))^(1/α)
+        # convert to number of time steps
+        L = Int(ceil(L_cont / dt))
 
-    # convert to number of time steps
-    L = Int(ceil(L_cont / dt))
+        # clamp to reasonable bounds
+        L = clamp(L, Int(length(data) ÷ 10), length(data))
 
-    # clamp to reasonable bounds
-    L = clamp(L, Int(length(data) ÷ 10), length(data))
-
-    prob._L = L
+        prob._L = L
+    catch e
+        prob._L = length(data)
+    end
 
 end
 

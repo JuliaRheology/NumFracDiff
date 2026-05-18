@@ -33,12 +33,12 @@ function compute!(method::GL, ws::NumDiffWorkspace, data::Vector{NumDiffFloat}, 
     α  = prob.order
     dt = prob.dt
     weights = ws.weights
-
+    d = deepcopy(data)
     inv_dt_pow = 1.0 / (dt^α)
     @inbounds for i in 1:n
         acc = 0.0
         for j in 1:i
-            acc += weights[j] * data[i-j+1]
+            acc += weights[j] * d[i-j+1]
         end
         ws.deriv[i] = acc * inv_dt_pow
     end
