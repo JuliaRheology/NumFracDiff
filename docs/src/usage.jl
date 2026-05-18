@@ -44,7 +44,7 @@ plot!(plt1, x, WorkSpace.deriv,
       color=:green,
       label="f^0.5(x)", 
       framestyle = :box) 
-compute!(Problem.method,WorkSpace,Workspace.deriv,Problem)
+compute!(Problem.method,WorkSpace,WorkSpace.deriv,Problem)
 plot!(plt1, x, WorkSpace.deriv,
       linestyle=:dash,
       color=:green,
