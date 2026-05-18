@@ -17,12 +17,12 @@ using NumFracDiff
 # Setup the problem parameters
 dt = 0.01
 n_points = 1000
-prob = NumDiffProblem(dt = dt, order = 0.5, n = n_points, method = GL())
 # Generate an input vector using a power function: $f(t) = t^2$
 t = [i * dt for i in 0:(n_points-1)]
 data = t .^ 2
-# Allocate workspace and precompute weights
-ws = NumDiffWorkspace(prob)
+# Allocate problem and workspace and precompute weights
+prob = NumDiffProblem(dt = dt, order = 0.5, n = n_points, method = GL())
+ws = init_workspace(prob)
 generate_weights!(prob.method, prob, ws, L=1000)
 
 # ### Numerical Implementation
@@ -40,11 +40,11 @@ generate_weights!(prob.method, prob, ws, L=1000)
 # The library offers two dispatch types for this full-memory calculation:
 # - `GL()`: The standard, single-threaded sequential implementation.
 prob = NumDiffProblem(dt = dt, order = 0.5, n = n_points, method = GL())
-ws = NumDiffWorkspace(prob)
+ws = init_workspace(prob)
 compute!(prob.method, ws, data, prob)
 # - `GLThreads()`: A multi-threaded implementation that parallelizes the outer loop using Julia's native task migration (`@threads :dynamic`) and leverages multi-core processors.
 prob = NumDiffProblem(dt = dt, order = 0.5, n = n_points, method = GLThreads())
-ws = NumDiffWorkspace(prob)
+ws = init_workspace(prob)
 compute!(prob.method, ws, data, prob)
 
 
@@ -69,19 +69,19 @@ compute!(prob.method, ws, data, prob)
 # The library provides four dispatch types for short memory calculation:
 # - `GLShortMem()`: Standard short-memory truncation, executed sequentially.
 prob = NumDiffProblem(dt = dt, order = 0.5, n = n_points, method = GLShortMem())
-ws = NumDiffWorkspace(prob)
+ws = init_workspace(prob)
 compute!(prob.method, ws, data, prob)
 # - `GLShortMemThreads()`: Parallelized version of `GLShortMem` using multi-threading (`@threads :dynamic`).
 prob = NumDiffProblem(dt = dt, order = 0.5, n = n_points, method = GLShortMemThreads())
-ws = NumDiffWorkspace(prob)
+ws = init_workspace(prob)
 compute!(prob.method, ws, data, prob)
 # - `GLShortMemCorr()`: Short-memory truncation with the correction term, executed sequentially.
 prob = NumDiffProblem(dt = dt, order = 0.5, n = n_points, method = GLShortMemCorr())
-ws = NumDiffWorkspace(prob)
+ws = init_workspace(prob)
 compute!(prob.method, ws, data, prob)
 # - `GLShortMemCorrThreads()`: Parallelized version of `GLShortMemCorr` combining error correction with multi-threading.
 prob = NumDiffProblem(dt = dt, order = 0.5, n = n_points, method = GLShortMemCorrThreads())
-ws = NumDiffWorkspace(prob)
+ws = init_workspace(prob)
 compute!(prob.method, ws, data, prob)
 
 # ## GL FFT
@@ -91,5 +91,5 @@ compute!(prob.method, ws, data, prob)
 # By leveraging the Fast Fourier Transform (FFT) via the `fftfilt` function, the asymptotic computational complexity is reduced to $\mathcal{O}(n \log n)$. Unlike the Short Memory Principle, this acceleration does not truncate the past history; it retains `full-memory accuracy` while offering massive performance gains for large datasets.
 
 prob = NumDiffProblem(dt = dt, order = 0.5, n = n_points, method = GLFFT())
-ws = NumDiffWorkspace(prob)
+ws = init_workspace(prob)
 compute!(prob.method, ws, data, prob)
