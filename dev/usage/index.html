@@ -22,7 +22,7 @@ plot!(plt, x, WorkSpace.deriv,
       framestyle = :box)
 xlabel!(&quot;x&quot;)
 ylabel!(&quot;y&quot;)
-plt</code></pre><img src="cb78deb1.svg" alt="Example block output"/><h2 id="Second-case"><a class="docs-heading-anchor" href="#Second-case">Second case</a><a id="Second-case-1"></a><a class="docs-heading-anchor-permalink" href="#Second-case" title="Permalink"></a></h2><pre><code class="language-julia hljs">update_order!(Problem,WorkSpace,0.5)
+plt</code></pre><img src="741df79d.svg" alt="Example block output"/><h2 id="Second-case"><a class="docs-heading-anchor" href="#Second-case">Second case</a><a id="Second-case-1"></a><a class="docs-heading-anchor-permalink" href="#Second-case" title="Permalink"></a></h2><pre><code class="language-julia hljs">update_order!(Problem,WorkSpace,0.5)
 compute!(Problem.method,WorkSpace,y,Problem)
 plt1 = plot(size = (500, 500))
 plot!(plt1, x, y,
@@ -35,7 +35,7 @@ plot!(plt1, x, WorkSpace.deriv,
       color=:green,
       label=&quot;f^0.5(x)&quot;,
       framestyle = :box)
-compute!(Problem.method,WorkSpace,y,Problem)
+compute!(Problem.method,WorkSpace,WorkSpace.deriv,Problem)
 plot!(plt1, x, WorkSpace.deriv,
       linestyle=:dash,
       color=:green,
@@ -43,7 +43,7 @@ plot!(plt1, x, WorkSpace.deriv,
       framestyle = :box)
 xlabel!(&quot;x&quot;)
 ylabel!(&quot;y&quot;)
-plt1</code></pre><img src="4fb83a96.svg" alt="Example block output"/><h2 id="Third-case"><a class="docs-heading-anchor" href="#Third-case">Third case</a><a id="Third-case-1"></a><a class="docs-heading-anchor-permalink" href="#Third-case" title="Permalink"></a></h2><pre><code class="language-julia hljs">y= x .* 2
+plt1</code></pre><img src="74e69e1f.svg" alt="Example block output"/><h2 id="Third-case"><a class="docs-heading-anchor" href="#Third-case">Third case</a><a id="Third-case-1"></a><a class="docs-heading-anchor-permalink" href="#Third-case" title="Permalink"></a></h2><pre><code class="language-julia hljs">y= x .* 2
 update_order!(Problem,WorkSpace,-0.5)
 compute!(Problem.method,WorkSpace,y,Problem)
 plt2 = plot(size = (500, 500))
@@ -57,11 +57,11 @@ plot!(plt2, x, WorkSpace.deriv,
       color=:green,
       label=&quot;f^(-0.5)(x)&quot;,
       framestyle = :box)
-compute!(Problem.method,WorkSpace,y,Problem)
+compute!(Problem.method,WorkSpace,WorkSpace.deriv,Problem)
 plot!(plt2, x, WorkSpace.deriv,
       linestyle=:dash,
       color=:green,
       label=&quot;f^(-1.0)(x)&quot;,
       framestyle = :box)
 xlabel!(&quot;x&quot;)
-ylabel!(&quot;y&quot;)</code></pre><img src="7079aed3.svg" alt="Example block output"/><hr/><p><em>This page was generated using <a href="https://github.com/fredrikekre/Literate.jl">Literate.jl</a>.</em></p></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../caputo/">« Caputo</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="catppuccin-latte">catppuccin-latte</option><option value="catppuccin-frappe">catppuccin-frappe</option><option value="catppuccin-macchiato">catppuccin-macchiato</option><option value="catppuccin-mocha">catppuccin-mocha</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.17.0 on <span class="colophon-date" title="Sunday 17 May 2026 12:46">Sunday 17 May 2026</span>. Using Julia version 1.12.6.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
+ylabel!(&quot;y&quot;)</code></pre><img src="3f9af030.svg" alt="Example block output"/><hr/><p><em>This page was generated using <a href="https://github.com/fredrikekre/Literate.jl">Literate.jl</a>.</em></p></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../caputo/">« Caputo</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="catppuccin-latte">catppuccin-latte</option><option value="catppuccin-frappe">catppuccin-frappe</option><option value="catppuccin-macchiato">catppuccin-macchiato</option><option value="catppuccin-mocha">catppuccin-mocha</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.17.0 on <span class="colophon-date" title="Monday 18 May 2026 10:14">Monday 18 May 2026</span>. Using Julia version 1.12.6.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
