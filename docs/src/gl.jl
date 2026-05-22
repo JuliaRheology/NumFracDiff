@@ -49,7 +49,7 @@ compute!(prob.method, ws, data, prob)
 
 # For long time-series or large datasets, the full-history approach of the standard GL method becomes computationally prohibitive. To address this, NumFracDiff implements the Short Memory Principle.
 
-# This principle assumes that the "memory" of the fractional derivative fades over time. Therefore, the calculation at index $i$ is truncated to include only a fixed window of the recent past, defined by an optimal memory length $L$ (determined automatically via [optimal_L!`](@ref)):
+# This principle assumes that the "memory" of the fractional derivative fades over time. Therefore, the calculation at index $i$ is truncated to include only a fixed window of the recent past, defined by an optimal memory length $L$ (determined automatically via [`optimal_L!`](@ref)):
 
 # $$L \ge \left(\left|\frac{M}{\epsilon_0\,\Gamma(1-\alpha)}\right|\right)^\frac{1}{\alpha}$$
 
