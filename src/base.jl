@@ -106,18 +106,25 @@ end
 """
 
 function update_order!(prob, ws, order_new)
-    # If the order is the same, keep existing weights and continue
     if order_new == prob.order
         return
     end
 
-    # Otherwise update order and regenerate weights
     prob.order = order_new
     generate_weights!(prob.method, prob, ws)
 end
 
 """
-    TODO:
+    compute!(data::Vector{NumDiffFloat}, prob::NumDiffProblem,ws::NumDiffWorkspace)
+
+    Main compute function, dispatches into different versions of the code based on the method chosen in
+        the Problem struct.
+        The output derivative will be stored inside the workspace struct as deriv.
+
+    # Arguments
+    - `data::Vector{NumDiffFloat}` : Input vector .
+    - `prob::NumDiffProblem` : The problem struct containing `dt`, `order`, `n`, and `method`.
+    - `ws::NumDiffWorkspace` : Workspace containing weights and output derivative.
 """
 function compute!(data::Vector{NumDiffFloat}, prob::NumDiffProblem,ws::NumDiffWorkspace)
     compute!(prob.method,ws,data,prob)

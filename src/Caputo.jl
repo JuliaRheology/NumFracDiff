@@ -19,7 +19,7 @@ function generate_weights!(::Union{Caputo, CaputoThreads}, prob::NumDiffProblem,
     α = 1.0 - prob.order
     ws.weights[1] = 1.0  # first weight
     prev_pow = 1.0       # start with 1^α
-
+    
     for k in 2:L
         curr_pow = k^α
         ws.weights[k] = curr_pow - prev_pow
@@ -44,32 +44,12 @@ end
     - `prob::NumDiffProblem` : problem definition, containing `order`, `dt`, and `L`.
 """
 
-# function compute!(::Caputo, ws::NumDiffWorkspace, data::Vector{NumDiffFloat}, prob::NumDiffProblem)
-#     n = prob.n
-#     α = prob.order
-#     dt = prob.dt
-#     weights = ws.weights
-#     C = dt^(-α) / gamma(2.0 - α)
-
-#     @inbounds ws.deriv[1] = C * weights[1] * data[1]
-
-#     @inbounds @simd for i in 2:n
-#         tmp = 0.0
-#         @simd for j in 1:(i-1)
-#             tmp += weights[j] * (data[i-j+1] - data[i-j])
-#         end
-#         tmp += weights[i] * data[1]
-#         ws.deriv[i] = C * tmp
-#     end
-
-# end
-
-
 function compute!(::Caputo, ws::NumDiffWorkspace, data::Vector{Float64}, prob::NumDiffProblem)
     n = prob.n
     α = prob.order
     dt = prob.dt
     weights = ws.weights
+    d = deepcopy(data)
     C = dt^(-α) / gamma(2.0 - α)
 
     # First element at t=0
@@ -80,10 +60,10 @@ function compute!(::Caputo, ws::NumDiffWorkspace, data::Vector{Float64}, prob::N
         tmp = 0.0
         # sum over past increments
         for j in 1:(i-1)
-            tmp += weights[j] * (data[i-j+1] - data[i-j])
+            tmp += weights[j] * (d[i-j+1] - d[i-j])
         end
         # Add the first data point contribution
-        tmp += weights[i] * data[1]
+        tmp += weights[i] * d[1]
         ws.deriv[i] = C * tmp
     end
 end
@@ -93,6 +73,7 @@ function compute!(::CaputoThreads, ws::NumDiffWorkspace, data::Vector{NumDiffFlo
     n = prob.n
     α = prob.order
     dt = prob.dt
+    d = deepcopy(data)
     weights = ws.weights
     C = dt^(-α) / gamma(2.0 - α)
 
@@ -103,10 +84,10 @@ function compute!(::CaputoThreads, ws::NumDiffWorkspace, data::Vector{NumDiffFlo
     @threads :dynamic for i in 2:n
         tmp = 0.0
         @simd for j in 1:(i-1)
-            tmp += weights[j] * (data[i-j+1] - data[i-j])
+            tmp += weights[j] * (d[i-j+1] - d[i-j])
         end
         # Add the first data point contribution
-        tmp += weights[i] * data[1]
+        tmp += weights[i] * d[1]
         @inbounds ws.deriv[i] = C * tmp
     end
 

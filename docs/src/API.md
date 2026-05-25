@@ -17,10 +17,3 @@ EditURL = "https://github.com/JuliaRheology/NumFracDiff/edit/main/docs/src/API.m
     optimal_L!
     compute!
 ```
-
-
-
-
-
-
-

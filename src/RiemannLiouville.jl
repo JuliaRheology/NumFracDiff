@@ -39,8 +39,7 @@ end
 
     # Arguments
 
-    - `method::RL` or `RLThreads`: Method descriptor. Must contain field `L::NumDiffInt` specifying 
-    the short-memory length.  
+    - `method::RL` or `RLThreads`: Method descriptor.
     - `ws::NumDiffWorkspace`: Workspace containing precomputed `weights` and the derivative vector `deriv`.  
     The derivative will be written **in-place** to avoid additional memory allocations.  
     - `data::Vector{NumDiffFloat}`: Input signal or time series to differentiate.  
@@ -51,23 +50,25 @@ end
 
     - `ws.deriv` updated **in-place** with the computed fractional derivative.
 """
+
 function compute!(method::RL, ws::NumDiffWorkspace, data::Vector{NumDiffFloat}, prob::NumDiffProblem)
 
     n  = prob.n
     α  = prob.order
     dt = prob.dt
+    d = deepcopy(data)
 
     weights = ws.weights
 
     C = dt^(-α) / gamma(2.0 - α)
 
-    @inbounds ws.deriv[1] = C * weights[1] * data[1]
+    @inbounds ws.deriv[1] = C * weights[1] * d[1]
 
     @inbounds for i in 2:n
         acc = zero(NumDiffFloat)
 
         for j in 1:i
-            acc += weights[j] * data[i-j+1]
+            acc += weights[j] * d[i-j+1]
         end
 
         ws.deriv[i] = C * acc
@@ -81,30 +82,46 @@ function compute!(method::RLThreads, ws::NumDiffWorkspace, data::Vector{NumDiffF
     n  = prob.n
     α  = prob.order
     dt = prob.dt
+    d = deepcopy(data)
 
     weights = ws.weights
 
     C = dt^(-α) / gamma(2.0 - α)
 
     # first element is scalar, no threading needed
-    @inbounds ws.deriv[1] = C * weights[1] * data[1]
+    @inbounds ws.deriv[1] = C * weights[1] * d[1]
 
     @threads :dynamic for i in 2:n
         acc = zero(NumDiffFloat)
         @simd for j in 1:i
-            @inbounds acc += weights[j] * data[i-j+1]
+            @inbounds acc += weights[j] * d[i-j+1]
         end
         @inbounds ws.deriv[i] = C * acc
     end
 end
 
 """
-# Short-memory option
+    compute!(method::RLShortMem, ws::NumDiffWorkspace, data::Vector{NumDiffFloat}, prob::NumDiffProblem)
 
-Both serial and threaded versions support the short-memory approximation: if `prob._L < prob.n`,  
-the computation uses only the last `L` points of `data` for indices `i > L` (fixed memory).  
-For `i <= L`, the algorithm uses all available past points (`i` points, growing memory).  
-If `prob._L` is set to `typemax(Int)` or a value ≥ `prob.n`, the full memory algorithm is used.
+    # Short-memory option
+
+    Both serial and threaded versions support the short-memory approximation: if `prob._L < prob.n`,  
+    the computation uses only the last `L` points of `data` for indices `i > L` (fixed memory).  
+    For `i <= L`, the algorithm uses all available past points (`i` points, growing memory).  
+    If `prob._L` is set to `typemax(Int)` or a value ≥ `prob.n`, the full memory algorithm is used.
+
+    # Arguments
+
+    - `method::RL` or `RLThreads`: Method descriptor. 
+    - `ws::NumDiffWorkspace`: Workspace containing precomputed `weights` and the derivative vector `deriv`.  
+    The derivative will be written **in-place** to avoid additional memory allocations.  
+    - `data::Vector{NumDiffFloat}`: Input signal or time series to differentiate.  
+    - `prob::NumDiffProblem`: Problem definition containing the derivative order `order`, time step `dt`, 
+    and signal length `n`.
+
+    # Returns
+
+    - `ws.deriv` updated **in-place** with the computed fractional derivative.
 
 """
 
@@ -113,14 +130,15 @@ function compute!(method::RLShortMem, ws::NumDiffWorkspace, data::Vector{NumDiff
     n  = prob.n
     α  = prob.order
     dt = prob.dt
-    optimal_L!(data,prob)
+    d = deepcopy(data)
+    optimal_L!(d,prob)
     L=prob._L
 
     weights = ws.weights
 
     C = dt^(-α) / gamma(2.0 - α)
 
-    @inbounds ws.deriv[1] = C * weights[1] * data[1]
+    @inbounds ws.deriv[1] = C * weights[1] * d[1]
 
     # ---------- Region 1: growing memory ----------
     grow_end = min(n, L)
@@ -129,7 +147,7 @@ function compute!(method::RLShortMem, ws::NumDiffWorkspace, data::Vector{NumDiff
         acc = zero(NumDiffFloat)
 
         for j in 1:i
-            acc += weights[j] * data[i-j+1]
+            acc += weights[j] * d[i-j+1]
         end
 
         ws.deriv[i] = C * acc
@@ -141,7 +159,7 @@ function compute!(method::RLShortMem, ws::NumDiffWorkspace, data::Vector{NumDiff
             acc = zero(NumDiffFloat)
 
             for j in 1:L
-                acc += weights[j] * data[i-j+1]
+                acc += weights[j] * d[i-j+1]
             end
 
             ws.deriv[i] = C * acc
@@ -155,21 +173,22 @@ function compute!(method::RLShortMemThreads, ws::NumDiffWorkspace, data::Vector{
     n  = prob.n
     α  = prob.order
     dt = prob.dt
-    optimal_L!(data,prob)
+    d = deepcopy(data)
+    optimal_L!(d,prob)
     L=prob._L
     weights = ws.weights
 
     C = dt^(-α) / gamma(2.0 - α)
 
     # first element is scalar, no threading needed
-    @inbounds ws.deriv[1] = C * weights[1] * data[1]
+    @inbounds ws.deriv[1] = C * weights[1] * d[1]
 
     # ---------- Region 1: growing memory ----------
     grow_end = min(n, L)
     @threads :dynamic for i in 2:grow_end
         acc = zero(NumDiffFloat)
         @simd for j in 1:i
-            @inbounds acc += weights[j] * data[i-j+1]
+            @inbounds acc += weights[j] * d[i-j+1]
         end
         @inbounds ws.deriv[i] = C * acc
     end
@@ -179,7 +198,7 @@ function compute!(method::RLShortMemThreads, ws::NumDiffWorkspace, data::Vector{
         @threads :dynamic for i in (L+1):n
             acc = zero(NumDiffFloat)
             @simd for j in 1:L
-                @inbounds acc += weights[j] * data[i-j+1]
+                @inbounds acc += weights[j] * d[i-j+1]
             end
             @inbounds ws.deriv[i] = C * acc
         end
@@ -190,7 +209,7 @@ end
 
 
 """
-    compute!(method, ws::NumDiffWorkspace, data::Vector{NumDiffFloat}, prob::NumDiffProblem)
+    compute!(method::RLShortMemCorr, ws::NumDiffWorkspace, data::Vector{NumDiffFloat}, prob::NumDiffProblem)
 
     Compute the **Riemann–Liouville fractional derivative** using the **short-memory approximation with correction** 
     and store the result directly in `ws.deriv`. This function has two variants depending on `method`:
@@ -207,7 +226,7 @@ end
 
     # Arguments
 
-    - `method::RLShortMemCorr` or `RLShortMemCorrThreads` : Method descriptor specifying the short-memory length `L`.  
+    - `method::RLShortMemCorr` or `RLShortMemCorrThreads` : Method descriptor.  
     - `ws::NumDiffWorkspace` : Workspace containing precomputed convolution weights (`ws.weights`) and preallocated derivative vector (`ws.deriv`).  
     - `data::Vector{NumDiffFloat}` : Input signal or time series to differentiate.  
     - `prob::NumDiffProblem` : Problem definition containing the derivative order `order`, time step `dt`, and signal length `n`.
@@ -217,13 +236,13 @@ end
     - `ws.deriv` updated **in-place** with the computed fractional derivative.
 """
 
-
 function compute!(method::RLShortMemCorr, ws::NumDiffWorkspace, data::Vector{NumDiffFloat}, prob::NumDiffProblem)
     n  = prob.n
     order  = prob.order
     dt = prob.dt
     weights = ws.weights
-    optimal_L!(data,prob)
+    d = deepcopy(data)
+    optimal_L!(d,prob)
     L=prob._L
 
     # Precompute constants
@@ -244,7 +263,7 @@ function compute!(method::RLShortMemCorr, ws::NumDiffWorkspace, data::Vector{Num
     for i in 1:min(L, n)
         acc = zero(NumDiffFloat)
         @simd for j in 1:i
-            acc += weights[j] * data[i-j+1]
+            acc += weights[j] * d[i-j+1]
         end
         ws.deriv[i] = C * acc
     end
@@ -257,15 +276,15 @@ function compute!(method::RLShortMemCorr, ws::NumDiffWorkspace, data::Vector{Num
 
             # convolution over last L points
             @simd for j in 1:L
-                acc += weights[j] * data[i-j+1]
+                acc += weights[j] * d[i-j+1]
             end
 
             # compute correction term
             m_0 = k_0 * pow_neg_order[idx] - offset_0
             m_1 = k_1 * pow_one_minus_order[idx] - offset_1
 
-            y_0 = data[i-L]
-            y_1 = i != L+1 ? y_0 - data[i-L-1] : 0.0
+            y_0 = d[i-L]
+            y_1 = i != L+1 ? y_0 - d[i-L-1] : 0.0
 
             correction = y_0 * m_0 + y_1 * (L * m_0 - m_1)
 
@@ -280,7 +299,8 @@ function compute!(method::RLShortMemCorrThreads, ws::NumDiffWorkspace, data::Vec
     order  = prob.order
     dt = prob.dt
     weights = ws.weights
-    optimal_L!(data,prob)
+    d = deepcopy(data)
+    optimal_L!(d,prob)
     L  = prob._L
 
     # Precompute constants
@@ -301,7 +321,7 @@ function compute!(method::RLShortMemCorrThreads, ws::NumDiffWorkspace, data::Vec
     @threads :dynamic for i in 1:min(L, n)
         acc = zero(NumDiffFloat)
         @simd for j in 1:i
-            @inbounds acc += weights[j] * data[i-j+1]
+            @inbounds acc += weights[j] * d[i-j+1]
         end
         @inbounds ws.deriv[i] = C * acc
     end
@@ -314,15 +334,15 @@ function compute!(method::RLShortMemCorrThreads, ws::NumDiffWorkspace, data::Vec
 
             # convolution over last L points
             @simd for j in 1:L
-                @inbounds acc += weights[j] * data[i-j+1]
+                @inbounds acc += weights[j] * d[i-j+1]
             end
 
             # compute correction term
             m_0 = k_0 * pow_neg_order[idx] - offset_0
             m_1 = k_1 * pow_one_minus_order[idx] - offset_1
 
-            @inbounds y_0 = data[i-L]
-            @inbounds y_1 = i != L+1 ? y_0 - data[i-L-1] : 0.0
+            @inbounds y_0 = d[i-L]
+            @inbounds y_1 = i != L+1 ? y_0 - d[i-L-1] : 0.0
 
             correction = y_0 * m_0 + y_1 * (L * m_0 - m_1)
 
