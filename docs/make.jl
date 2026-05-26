@@ -53,8 +53,8 @@ function maindocbuilder()
         pages=[
             "Home" => "index.md",
             "Architecture" => "Architecture.md",
-            "Numerical Methods" => ["GL" => "gl.md",
-                                    "RL" => "rl.md",
+            "Numerical Methods" => ["Grunwald-Letnikov" => "gl.md",
+                                    "Riemann-Liovuille" => "rl.md",
                                     "Caputo" => "caputo.md"],
             "Usage" => "usage.md",
             "API" => "API.md"

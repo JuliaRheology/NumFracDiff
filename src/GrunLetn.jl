@@ -30,7 +30,7 @@ end
 """
     compute!(method::GL, ws::NumDiffWorkspace, data::Vector{NumDiffFloat}, prob::NumDiffProblem)
 
-    Compute the Grumwald-Letnikov fractional derivative of the input signal `data` and store the result
+    Compute the Grünwald-Letnikov fractional derivative of the input signal `data` and store the result
     directly in `ws.deriv`. This function has two variants depending on `method`:
 
     1. **Serial version** (`method::GL`) 
@@ -177,7 +177,7 @@ end
 """
     compute!(method::GLShortMemCorr, ws::NumDiffWorkspace, data::Vector{NumDiffFloat}, prob::NumDiffProblem)
 
-    Compute the **Grumwald-Letnikov fractional derivative** using the **short-memory approximation with correction** 
+    Compute the **Grünwald-Letnikov fractional derivative** using the **short-memory approximation with correction** 
     and store the result directly in `ws.deriv`. This function has two variants depending on `method`:
 
     1. **Serial version** (`GLShortMemCorr`)  
