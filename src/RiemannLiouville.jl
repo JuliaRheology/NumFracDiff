@@ -313,7 +313,7 @@ function compute!(method::RLShortMemCorrThreads, ws::NumDiffWorkspace, data::Vec
     offset_0 = k_0 * L^(-order)
     offset_1 = k_1 * L^(one_minus_order)
 
-    # Precompute powers for correction region (i > L) - TO BE CHECKED
+    # Precompute powers for correction region (i > L)
     pow_neg_order = [(i)^(-order) for i in (L+1):n]
     pow_one_minus_order = [(i)^(one_minus_order) for i in (L+1):n]
 
