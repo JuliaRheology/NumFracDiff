@@ -1,5 +1,5 @@
 ---
-title: NumFracDiff
+title: NumFracDiff.jl -- A Julia Package for Fractional Derivatives and Integral Numerical Evaluation
 tags:
   - Fractional Calculus
   - High Performance Computing
