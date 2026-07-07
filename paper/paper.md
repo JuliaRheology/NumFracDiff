@@ -6,10 +6,26 @@ tags:
   - Julia
 authors:
   - name: Lorenzo Fonnesu
+    affiliation: 1
   - name: Andrea Grassi
-  - name: Alessandra Bonfanti 
+    affiliation: 1
+  - name: Jonathan Louis Kaplan
+    orcid: 0000-0002-2700-5229
+    affiliation: 2
+  - name: Alexandre J Kabla
+    orcid: 0000-0002-0280-3531
+    affiliation: 2
+  - name: Alessandra Bonfanti
+    orcid: 0000-0003-2185-4913
+    affiliation: 3
 affiliations:
-date:
+  - name: Department of Electronics Information and Bioengineering, Politecnico di Milano, Piazza Leonardo Da Vinci 32, Milan, 20133, Italy
+    index: 1
+  - name: Department of Engineering, University of Cambridge, Trumpington St, Cambridge, CB2 1PZ, United Kingdom
+    index: 2
+  - name: Department of Civil and Environmental Engineering, Politecnico di Milano, Piazza Leonardo Da Vinci 32, Milan, 20133, Italy
+    index: 3
+date: XX-XX-2026
 bibliography: paper.bib
 ---
 # Summary
