@@ -67,6 +67,8 @@ The package significantly lowers the computational barrier in fields heavily rel
 
 To demonstrate the practical usefulness of NumFracDiff and the impact that the implemented methods can have, they have been completely integrated and fully tested into a dedicated branch of the RHEOS.jl library [@kaplan2020rheos], directly accelerating core tasks within viscoelastic modeling: for model parameter fitting, both implementations, using the short memory principle and FFT, demonstrated a speedup of around 20 times compared to the current method, whilst for prediction tasks, FFT achieves a speedup of up to 100 times. As well as demonstrating its effectiveness under rigorous, data-driven workflows, this also shows how NumFracDiff.jl can be adopted within complex external frameworks without requiring changes to their public interface.
 
+AJK: Add one graph here illustrating the performance boost?
+
 # AI usage disclosure
 Generative AI tools were used during the development of NumFracDiff to assist with the review of the code and documentation, primarily to identify errors and improve syntax and grammar. All AI suggestions were verified by the authors, who designed and developed the architecture and all critical components.
 
